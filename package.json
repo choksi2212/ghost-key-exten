@@ -1,0 +1,22 @@
+{
+  "name": "ghostkey-biometric-auth",
+  "version": "1.0.0",
+  "description": "Advanced biometric authentication extension using keystroke dynamics and voice recognition",
+  "private": true,
+  "author": "GhostKey Team",
+  "license": "MIT",
+  "scripts": {
+    "lint": "echo 'No linting configured'",
+    "test": "echo 'No tests configured'"
+  },
+  "keywords": [
+    "biometric",
+    "authentication",
+    "keystroke",
+    "voice",
+    "security",
+    "chrome-extension"
+  ],
+  "devDependencies": {},
+  "dependencies": {}
+}

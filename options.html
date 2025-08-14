@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GhostKey Options</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .logo {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .title {
+      font-size: 32px;
+      font-weight: 600;
+      color: #06b6d4;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: #94a3b8;
+    }
+
+    .section {
+      background: rgba(51, 65, 85, 0.3);
+      border: 1px solid #475569;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #06b6d4;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .setting-group {
+      margin-bottom: 20px;
+    }
+
+    .setting-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+    }
+
+    .setting-item:last-child {
+      border-bottom: none;
+    }
+
+    .setting-label {
+      flex: 1;
+    }
+
+    .setting-title {
+      font-size: 16px;
+      font-weight: 500;
+      color: #e2e8f0;
+      margin-bottom: 4px;
+    }
+
+    .setting-description {
+      font-size: 14px;
+      color: #94a3b8;
+    }
+
+    .toggle {
+      width: 48px;
+      height: 24px;
+      background: #475569;
+      border-radius: 12px;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .toggle.active {
+      background: #06b6d4;
+    }
+
+    .toggle::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      transition: all 0.3s;
+    }
+
+    .toggle.active::after {
+      transform: translateX(24px);
+    }
+
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .slider {
+      flex: 1;
+      height: 6px;
+      background: #475569;
+      border-radius: 3px;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background: #06b6d4;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background: #06b6d4;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+    }
+
+    .slider-value {
+      min-width: 60px;
+      text-align: right;
+      font-family: monospace;
+      color: #06b6d4;
+      font-weight: 600;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+    }
+
+    .stat-card {
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid #475569;
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 600;
+      color: #06b6d4;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-right: 12px;
+      margin-bottom: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn.primary {
+      background: linear-gradient(to right, #06b6d4, #3b82f6);
+      color: white;
+    }
+
+    .btn.primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+    }
+
+    .btn.secondary {
+      background: rgba(71, 85, 105, 0.5);
+      color: #e2e8f0;
+      border: 1px solid #475569;
+    }
+
+    .btn.secondary:hover {
+      background: rgba(71, 85, 105, 0.7);
+    }
+
+    .btn.danger {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .btn.danger:hover {
+      background: rgba(239, 68, 68, 0.3);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">🛡️</div>
+      <div class="title">GhostKey Options</div>
+      <div class="subtitle">Configure your biometric authentication settings</div>
+    </div>
+
+    <!-- Statistics Section -->
+    <div class="section">
+      <div class="section-title">
+        <span>📊</span>
+        Statistics
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="totalUsers">0</div>
+          <div class="stat-label">Total Users</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="totalAttempts">0</div>
+          <div class="stat-label">Auth Attempts</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="successRate">0%</div>
+          <div class="stat-label">Success Rate</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="lastAuth">Never</div>
+          <div class="stat-label">Last Auth</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- General Settings -->
+    <div class="section">
+      <div class="section-title">
+        <span>⚙️</span>
+        General Settings
+      </div>
+      <div class="setting-group">
+        <div class="setting-item">
+          <div class="setting-label">
+            <div class="setting-title">Auto-enable on login pages</div>
+            <div class="setting-description">Automatically activate GhostKey when login pages are detected</div>
+          </div>
+          <div class="toggle" id="autoEnable"></div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-label">
+            <div class="setting-title">Voice authentication</div>
+            <div class="setting-description">Enable voice recognition as a fallback authentication method</div>
+          </div>
+          <div class="toggle" id="voiceAuthEnabled"></div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-label">
+            <div class="setting-title">Privacy mode</div>
+            <div class="setting-description">Enhanced privacy protection for sensitive data</div>
+          </div>
+          <div class="toggle" id="privacyMode"></div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-label">
+            <div class="setting-title">Debug mode</div>
+            <div class="setting-description">Enable detailed logging for troubleshooting</div>
+          </div>
+          <div class="toggle" id="debugMode"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Authentication Thresholds -->
+    <div class="section">
+      <div class="section-title">
+        <span>🎯</span>
+        Authentication Thresholds
+      </div>
+      <div class="setting-group">
+        <div class="setting-item">
+          <div class="setting-label">
+            <div class="setting-title">Autoencoder Threshold</div>
+            <div class="setting-description">Lower values = stricter authentication</div>
+          </div>
+          <div class="slider-container">
+            <input type="range" class="slider" id="autoencoderThreshold" min="0.01" max="0.1" step="0.001" value="0.03">
+            <div class="slider-value" id="autoencoderValue">0.03</div>
+          </div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-label">
+            <div class="setting-title">Voice Similarity Threshold</div>
+            <div class="setting-description">Minimum voice match percentage required</div>
+          </div>
+          <div class="slider-container">
+            <input type="range" class="slider" id="voiceThreshold" min="0.5" max="0.95" step="0.01" value="0.75">
+            <div class="slider-value" id="voiceValue">0.75</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Training Settings -->
+    <div class="section">
+      <div class="section-title">
+        <span>📚</span>
+        Training Settings
+      </div>
+      <div class="setting-group">
+        <div class="setting-item">
+          <div class="setting-label">
+            <div class="setting-title">Required Training Samples</div>
+            <div class="setting-description">Number of keystroke samples needed for training</div>
+          </div>
+          <div class="slider-container">
+            <input type="range" class="slider" id="samplesRequired" min="5" max="20" step="1" value="10">
+            <div class="slider-value" id="samplesValue">10</div>
+          </div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-label">
+            <div class="setting-title">Noise Level</div>
+            <div class="setting-description">Data augmentation noise level for training</div>
+          </div>
+          <div class="slider-container">
+            <input type="range" class="slider" id="noiseLevel" min="0.05" max="0.2" step="0.01" value="0.1">
+            <div class="slider-value" id="noiseValue">0.1</div>
+          </div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-label">
+            <div class="setting-title">Augmentation Factor</div>
+            <div class="setting-description">Number of synthetic samples generated per real sample</div>
+          </div>
+          <div class="slider-container">
+            <input type="range" class="slider" id="augmentationFactor" min="1" max="5" step="1" value="3">
+            <div class="slider-value" id="augmentationValue">3</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Management -->
+    <div class="section">
+      <div class="section-title">
+        <span>💾</span>
+        Data Management
+      </div>
+      <div class="setting-group">
+        <button class="btn primary" id="exportData">
+          <span>📤</span>
+          Export Data
+        </button>
+        <button class="btn secondary" id="importData">
+          <span>📥</span>
+          Import Data
+        </button>
+        <input type="file" id="importFile" accept=".json">
+        <button class="btn danger" id="clearAllData">
+          <span>🗑️</span>
+          Clear All Data
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

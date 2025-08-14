@@ -1,0 +1,42 @@
+{
+  "manifest_version": 3,
+  "name": "GhostKey - Biometric Authentication",
+  "version": "1.0.0",
+  "description": "Advanced biometric authentication using keystroke dynamics and voice recognition",
+  "permissions": ["storage", "activeTab", "scripting", "tabs", "microphone"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["meyda.min.js", "utils/keystroke-analyzer.js", "utils/crypto-utils.js", "utils/auth-config.js", "content.js"],
+      "css": ["content.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "GhostKey Authentication",
+    "default_icon": {
+      "16": "icon16.png",
+      "32": "icon32.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icon16.png",
+    "32": "icon32.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "options_page": "options.html",
+  "web_accessible_resources": [
+    {
+      "resources": ["injected.js", "meyda.min.js", "utils/keystroke-analyzer.js", "utils/crypto-utils.js", "utils/auth-config.js", "admin.html"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

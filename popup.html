@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GhostKey Authentication</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 350px;
+      min-height: 400px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      color: #e2e8f0;
+    }
+
+    .header {
+      background: linear-gradient(to right, rgba(30, 41, 59, 0.9), rgba(51, 65, 85, 0.9));
+      padding: 20px;
+      text-align: center;
+      border-bottom: 1px solid #475569;
+    }
+
+    .logo {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #06b6d4;
+    }
+
+    .subtitle {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+
+    .content {
+      padding: 20px;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding: 12px;
+      background: rgba(51, 65, 85, 0.3);
+      border: 1px solid #475569;
+      border-radius: 8px;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ef4444;
+      transition: all 0.3s;
+    }
+
+    .status-dot.active {
+      background: #10b981;
+      animation: pulse 2s infinite;
+    }
+
+    .status-text {
+      flex: 1;
+      font-size: 14px;
+      color: #e2e8f0;
+    }
+
+    .section {
+      margin-bottom: 20px;
+    }
+
+    .section.hidden {
+      display: none;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #06b6d4;
+      margin-bottom: 12px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn.primary {
+      background: linear-gradient(to right, #06b6d4, #3b82f6);
+      color: white;
+    }
+
+    .btn.primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+    }
+
+    .btn.secondary {
+      background: rgba(71, 85, 105, 0.5);
+      color: #e2e8f0;
+      border: 1px solid #475569;
+    }
+
+    .btn.secondary:hover {
+      background: rgba(71, 85, 105, 0.7);
+    }
+
+    .btn.danger {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .btn.danger:hover {
+      background: rgba(239, 68, 68, 0.3);
+    }
+
+    .settings {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #475569;
+    }
+
+    .setting-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 13px;
+    }
+
+    .toggle {
+      width: 40px;
+      height: 20px;
+      background: #475569;
+      border-radius: 10px;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .toggle.active {
+      background: #06b6d4;
+    }
+
+    .toggle::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      background: white;
+      border-radius: 50%;
+      transition: all 0.3s;
+    }
+
+    .toggle.active::after {
+      transform: translateX(20px);
+    }
+
+    .alert {
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .alert.info {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: #3b82f6;
+    }
+
+    .alert.success {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #10b981;
+    }
+
+    .alert.error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #ef4444;
+    }
+
+    .training-progress {
+      margin: 16px 0;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(71, 85, 105, 0.5);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(to right, #06b6d4, #3b82f6);
+      transition: width 0.3s ease;
+      width: 0%;
+    }
+
+    .progress-text {
+      text-align: center;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">🛡️</div>
+    <div class="title">GhostKey</div>
+    <div class="subtitle">Biometric Authentication</div>
+  </div>
+
+  <div class="content">
+    <div class="status">
+      <div class="status-dot" id="statusDot"></div>
+      <div class="status-text" id="statusText">Loading...</div>
+    </div>
+
+    <div id="alertContainer"></div>
+
+    <!-- Registration Section -->
+    <div class="section hidden" id="registrationSection">
+      <div class="section-title">🚀 Get Started</div>
+      <button class="btn primary" id="startRegistration">
+        <span>🔐</span>
+        Start Registration Process
+      </button>
+    </div>
+
+    <!-- Authentication Section -->
+    <div class="section hidden" id="authenticationSection">
+      <div class="section-title">⚡ Authentication</div>
+      <button class="btn primary" id="enableAuth">
+        <span>🛡️</span>
+        Enable on This Page
+      </button>
+      <button class="btn secondary" id="testAuth">
+        <span>🧪</span>
+        Test Authentication
+      </button>
+    </div>
+
+    <!-- Training Section -->
+    <div class="section hidden" id="trainingSection">
+      <div class="section-title">📚 Training in Progress</div>
+      <div class="training-progress">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="trainingStatus">Training...</div>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="settings">
+      <div class="section-title">⚙️ Settings</div>
+      <div class="setting-item">
+        <span>Auto-enable on login pages</span>
+        <div class="toggle" id="autoEnable"></div>
+      </div>
+      <div class="setting-item">
+        <span>Voice authentication</span>
+        <div class="toggle" id="voiceAuth"></div>
+      </div>
+      <div class="setting-item">
+        <span>Privacy mode</span>
+        <div class="toggle" id="privacyMode"></div>
+      </div>
+    </div>
+
+    <!-- Data Management -->
+    <div class="section" style="margin-top: 20px;">
+      <button class="btn primary" id="adminPanel" style="margin-bottom: 12px;">
+        <span>⚙️</span>
+        Admin Panel
+      </button>
+      <button class="btn danger" id="clearData">
+        <span>🗑️</span>
+        Clear All Data
+      </button>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

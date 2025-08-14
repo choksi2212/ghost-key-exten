@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GhostKey Admin Panel</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 30px;
+      background: rgba(51, 65, 85, 0.3);
+      border: 1px solid #475569;
+      border-radius: 12px;
+    }
+
+    .logo {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .title {
+      font-size: 32px;
+      font-weight: 600;
+      color: #06b6d4;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: #94a3b8;
+    }
+
+    .admin-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .config-section {
+      background: rgba(51, 65, 85, 0.3);
+      border: 1px solid #475569;
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #06b6d4;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .config-group {
+      margin-bottom: 20px;
+    }
+
+    .config-item {
+      margin-bottom: 16px;
+    }
+
+    .config-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: #e2e8f0;
+      margin-bottom: 6px;
+    }
+
+    .config-description {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .config-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      background: rgba(30, 41, 59, 0.5);
+      color: #e2e8f0;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .config-input:focus {
+      outline: none;
+      border-color: #06b6d4;
+      box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+    }
+
+    .config-range {
+      width: 100%;
+      margin: 8px 0;
+    }
+
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+
+    .config-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 8px 0;
+    }
+
+    .config-checkbox input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #06b6d4;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(to right, #06b6d4, #3b82f6);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+    }
+
+    .btn-secondary {
+      background: rgba(71, 85, 105, 0.5);
+      color: #e2e8f0;
+      border: 1px solid #475569;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(71, 85, 105, 0.7);
+    }
+
+    .btn-danger {
+      background: linear-gradient(to right, #ef4444, #dc2626);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 16px 20px;
+      border-radius: 8px;
+      font-weight: 500;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+    }
+
+    .notification.show {
+      transform: translateX(0);
+    }
+
+    .notification.success {
+      background: rgba(16, 185, 129, 0.9);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: white;
+    }
+
+    .notification.error {
+      background: rgba(239, 68, 68, 0.9);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: white;
+    }
+
+    .validation-error {
+      color: #ef4444;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid #475569;
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 600;
+      color: #06b6d4;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">🛡️</div>
+      <h1 class="title">GhostKey Admin Panel</h1>
+      <p class="subtitle">Configure advanced biometric authentication settings</p>
+    </div>
+
+    <!-- Statistics Section -->
+    <div class="config-section">
+      <h2 class="section-title">📊 System Statistics</h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="totalProfiles">0</div>
+          <div class="stat-label">Total Profiles</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="totalAttempts">0</div>
+          <div class="stat-label">Auth Attempts</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="successRate">0%</div>
+          <div class="stat-label">Success Rate</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="lastActivity">Never</div>
+          <div class="stat-label">Last Activity</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-grid">
+      <!-- Keystroke Analysis Configuration -->
+      <div class="config-section">
+        <h2 class="section-title">⌨️ Keystroke Analysis</h2>
+        
+        <div class="config-item">
+          <label class="config-label">Training Samples Required</label>
+          <p class="config-description">Number of keystroke samples needed for training</p>
+          <input type="range" class="config-range" id="samplesRequired" min="5" max="20" step="1">
+          <div class="range-labels">
+            <span>5</span>
+            <span id="samplesRequiredValue">10</span>
+            <span>20</span>
+          </div>
+        </div>
+
+        <div class="config-item">
+          <label class="config-label">Authentication Threshold</label>
+          <p class="config-description">Lower values = more strict authentication</p>
+          <input type="range" class="config-range" id="authThreshold" min="0.01" max="0.1" step="0.005">
+          <div class="range-labels">
+            <span>0.01</span>
+            <span id="authThresholdValue">0.03</span>
+            <span>0.1</span>
+          </div>
+        </div>
+
+        <div class="config-item">
+          <label class="config-label">Feature Weights</label>
+          <p class="config-description">Adjust importance of different keystroke features</p>
+          
+          <div style="margin: 8px 0;">
+            <label style="font-size: 12px; color: #94a3b8;">Hold Time Weight</label>
+            <input type="range" class="config-range" id="holdTimeWeight" min="0" max="1" step="0.05">
+            <span id="holdTimeWeightValue" style="font-size: 12px; color: #06b6d4;">0.25</span>
+          </div>
+          
+          <div style="margin: 8px 0;">
+            <label style="font-size: 12px; color: #94a3b8;">Dwell Time Weight</label>
+            <input type="range" class="config-range" id="dwellTimeWeight" min="0" max="1" step="0.05">
+            <span id="dwellTimeWeightValue" style="font-size: 12px; color: #06b6d4;">0.25</span>
+          </div>
+          
+          <div style="margin: 8px 0;">
+            <label style="font-size: 12px; color: #94a3b8;">Flight Time Weight</label>
+            <input type="range" class="config-range" id="flightTimeWeight" min="0" max="1" step="0.05">
+            <span id="flightTimeWeightValue" style="font-size: 12px; color: #06b6d4;">0.25</span>
+          </div>
+          
+          <div style="margin: 8px 0;">
+            <label style="font-size: 12px; color: #94a3b8;">Pressure Variance Weight</label>
+            <input type="range" class="config-range" id="pressureVarianceWeight" min="0" max="1" step="0.05">
+            <span id="pressureVarianceWeightValue" style="font-size: 12px; color: #06b6d4;">0.25</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Voice Authentication Configuration -->
+      <div class="config-section">
+        <h2 class="section-title">🎤 Voice Authentication</h2>
+        
+        <div class="config-item">
+          <label class="config-label">Voice Samples Required</label>
+          <p class="config-description">Number of voice samples for training</p>
+          <input type="range" class="config-range" id="voiceSamples" min="3" max="10" step="1">
+          <div class="range-labels">
+            <span>3</span>
+            <span id="voiceSamplesValue">5</span>
+            <span>10</span>
+          </div>
+        </div>
+
+        <div class="config-item">
+          <label class="config-label">Voice Similarity Threshold</label>
+          <p class="config-description">Higher values = more strict voice matching</p>
+          <input type="range" class="config-range" id="voiceThreshold" min="0.5" max="0.95" step="0.05">
+          <div class="range-labels">
+            <span>0.5</span>
+            <span id="voiceThresholdValue">0.75</span>
+            <span>0.95</span>
+          </div>
+        </div>
+
+        <div class="config-item">
+          <label class="config-label">Recording Timeout (seconds)</label>
+          <p class="config-description">Maximum recording duration</p>
+          <input type="range" class="config-range" id="voiceTimeout" min="2" max="10" step="1">
+          <div class="range-labels">
+            <span>2s</span>
+            <span id="voiceTimeoutValue">5s</span>
+            <span>10s</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security Configuration -->
+      <div class="config-section">
+        <h2 class="section-title">🔒 Security Settings</h2>
+        
+        <div class="config-checkbox">
+          <input type="checkbox" id="encryptionEnabled">
+          <label>Enable AES-256 Encryption</label>
+        </div>
+        
+        <div class="config-item">
+          <label class="config-label">Max Failed Attempts</label>
+          <p class="config-description">Number of failed attempts before lockout</p>
+          <input type="range" class="config-range" id="maxFailedAttempts" min="1" max="10" step="1">
+          <div class="range-labels">
+            <span>1</span>
+            <span id="maxFailedAttemptsValue">3</span>
+            <span>10</span>
+          </div>
+        </div>
+
+        <div class="config-item">
+          <label class="config-label">Lockout Duration (minutes)</label>
+          <p class="config-description">How long to lock out after max failed attempts</p>
+          <input type="range" class="config-range" id="lockoutDuration" min="1" max="30" step="1">
+          <div class="range-labels">
+            <span>1m</span>
+            <span id="lockoutDurationValue">5m</span>
+            <span>30m</span>
+          </div>
+        </div>
+
+        <div class="config-item">
+          <label class="config-label">Session Timeout (minutes)</label>
+          <p class="config-description">Auto-logout after inactivity</p>
+          <input type="range" class="config-range" id="sessionTimeout" min="5" max="120" step="5">
+          <div class="range-labels">
+            <span>5m</span>
+            <span id="sessionTimeoutValue">30m</span>
+            <span>120m</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Neural Network Configuration -->
+      <div class="config-section">
+        <h2 class="section-title">🧠 Neural Network</h2>
+        
+        <div class="config-item">
+          <label class="config-label">Learning Rate</label>
+          <p class="config-description">Network learning speed</p>
+          <input type="range" class="config-range" id="learningRate" min="0.0001" max="0.01" step="0.0001">
+          <div class="range-labels">
+            <span>0.0001</span>
+            <span id="learningRateValue">0.001</span>
+            <span>0.01</span>
+          </div>
+        </div>
+
+        <div class="config-item">
+          <label class="config-label">Training Epochs</label>
+          <p class="config-description">Number of training iterations</p>
+          <input type="range" class="config-range" id="epochs" min="50" max="500" step="10">
+          <div class="range-labels">
+            <span>50</span>
+            <span id="epochsValue">100</span>
+            <span>500</span>
+          </div>
+        </div>
+
+        <div class="config-item">
+          <label class="config-label">Batch Size</label>
+          <p class="config-description">Training batch size</p>
+          <input type="range" class="config-range" id="batchSize" min="8" max="128" step="8">
+          <div class="range-labels">
+            <span>8</span>
+            <span id="batchSizeValue">32</span>
+            <span>128</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- UI Configuration -->
+      <div class="config-section">
+        <h2 class="section-title">🎨 User Interface</h2>
+        
+        <div class="config-checkbox">
+          <input type="checkbox" id="autoEnable">
+          <label>Auto-enable on login pages</label>
+        </div>
+        
+        <div class="config-checkbox">
+          <input type="checkbox" id="showNotifications">
+          <label>Show authentication notifications</label>
+        </div>
+        
+        <div class="config-item">
+          <label class="config-label">Notification Duration (seconds)</label>
+          <p class="config-description">How long notifications stay visible</p>
+          <input type="range" class="config-range" id="notificationDuration" min="2" max="10" step="1">
+          <div class="range-labels">
+            <span>2s</span>
+            <span id="notificationDurationValue">5s</span>
+            <span>10s</span>
+          </div>
+        </div>
+
+        <div class="config-item">
+          <label class="config-label">UI Fade Delay (seconds)</label>
+          <p class="config-description">Delay before UI becomes transparent</p>
+          <input type="range" class="config-range" id="uiFadeDelay" min="5" max="60" step="5">
+          <div class="range-labels">
+            <span>5s</span>
+            <span id="uiFadeDelayValue">15s</span>
+            <span>60s</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data Augmentation -->
+      <div class="config-section">
+        <h2 class="section-title">🔄 Data Augmentation</h2>
+        
+        <div class="config-item">
+          <label class="config-label">Noise Level</label>
+          <p class="config-description">Amount of noise added to training data</p>
+          <input type="range" class="config-range" id="noiseLevel" min="0.05" max="0.3" step="0.01">
+          <div class="range-labels">
+            <span>0.05</span>
+            <span id="noiseLevelValue">0.1</span>
+            <span>0.3</span>
+          </div>
+        </div>
+
+        <div class="config-item">
+          <label class="config-label">Augmentation Factor</label>
+          <p class="config-description">Multiplier for synthetic training data</p>
+          <input type="range" class="config-range" id="augmentationFactor" min="1" max="10" step="1">
+          <div class="range-labels">
+            <span>1x</span>
+            <span id="augmentationFactorValue">3x</span>
+            <span>10x</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <button class="btn btn-primary" id="saveConfig">
+        <span>💾</span>
+        Save Configuration
+      </button>
+      <button class="btn btn-secondary" id="loadConfig">
+        <span>🔄</span>
+        Reload Settings
+      </button>
+      <button class="btn btn-secondary" id="exportConfig">
+        <span>📤</span>
+        Export Config
+      </button>
+      <button class="btn btn-secondary" id="importConfig">
+        <span>📥</span>
+        Import Config
+      </button>
+      <button class="btn btn-danger" id="resetConfig">
+        <span>⚠️</span>
+        Reset to Defaults
+      </button>
+    </div>
+  </div>
+
+  <script src="utils/auth-config.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html> 
